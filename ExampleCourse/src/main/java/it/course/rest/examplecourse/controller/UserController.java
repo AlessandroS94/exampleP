@@ -1,6 +1,8 @@
 package it.course.rest.examplecourse.controller;
 
+import it.course.rest.examplecourse.exception.ResourceNotFoundException;
 import it.course.rest.examplecourse.model.User;
+import it.course.rest.examplecourse.repository.CourseRepository;
 import it.course.rest.examplecourse.repository.RoleRepository;
 import it.course.rest.examplecourse.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ public class UserController {
     UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private CourseRepository courseRepository;
 
     @GetMapping("/user/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id){
@@ -28,4 +32,25 @@ public class UserController {
         return new ResponseEntity<>(_user, HttpStatus.CREATED);
     }
 
+    /*
+    @PostMapping("/course/{courseId}/user")
+    public ResponseEntity<User> addTag(@PathVariable(value = "courseId") Long courseId, @RequestBody User userRequest) {
+        User user = courseRepository.findById(courseId).map(course -> {
+            long userId = userRequest.getId();
+            // user is existed
+            if (userId != 0L) {
+                User _user = userRepository.findById(userId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Not found User with id = " + userId));
+                course.addUser(_user);
+                courseRepository.save(course);
+                return _user;
+            }
+            // add and create new User
+            course.addUser(userRequest);
+            return userRepository.save(userRequest);
+        }).orElseThrow(() -> new ResourceNotFoundException("Not found Tutorial with id = " + courseId));
+
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+*/
 }
