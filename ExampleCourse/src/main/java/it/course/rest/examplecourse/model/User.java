@@ -1,52 +1,56 @@
 package it.course.rest.examplecourse.model;
 
+
 import jakarta.persistence.*;
+import lombok.*;
+import javax.validation.constraints.*;
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        })
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Setter
+    @Getter
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    @Setter
+    @Getter
+    @NotBlank
+    @Size(max = 20)
+    private String username;
+    @Setter
+    @Getter
+    @NotBlank
+    @Size(max = 50)
+    @Email
+    private String email;
+    @Setter
+    @Getter
+    @NotBlank
+    @Size(max = 120)
+    private String password;
 
-    private String surname;
-
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "roles_id")
-    private Role role;
-
-    public String getName() {
-        return name;
+    @Getter
+    @Setter
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+    public User() {
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
     }
 
 }
